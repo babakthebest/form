@@ -8,6 +8,8 @@ type Inputs = {
   description: string | null;
   chamberName: string | null;
   logoImage: FileList | null;
+  backgroundImage: FileList | null;
+  cridentialImage: FileList | null;
   deliveryInTown: boolean | null;
   freeDeliveryInTown: boolean | null;
   payAtHomeInTown: boolean | null;
@@ -51,9 +53,21 @@ export default function MyForm() {
       const propertyString = JSON.stringify(property);
       formData.append("property", propertyString);
     }
-    if (property.logoImage) {
-      // const logoImageBuffer = await property.logoImage.arrayBuffer();
-      // const logoImageBlob = new Blob([logoImageBuffer]);
+    if (property.backgroundImage && property.backgroundImage?.length > 0) {
+      formData.append(
+        "files",
+        property.backgroundImage[0],
+        "backgroundImage.jpg"
+      );
+    }
+    if (property.cridentialImage && property.cridentialImage?.length > 0) {
+      formData.append(
+        "files",
+        property.cridentialImage[0],
+        "cridentialImage.jpg"
+      );
+    }
+    if (property.logoImage && property.logoImage?.length > 0) {
       formData.append("files", property.logoImage[0], "logoImage.jpg");
     }
     try {

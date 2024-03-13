@@ -9,6 +9,8 @@ type Inputs = {
   description: string | null;
   chamberName: string | null;
   logoImage: FileList | null;
+  backgroundImage: FileList | null;
+  cridentialImage: FileList | null;
   deliveryInTown: boolean | null;
   freeDeliveryInTown: boolean | null;
   payAtHomeInTown: boolean | null;
@@ -34,11 +36,16 @@ export default function Step() {
     },
   });
   const logoImage = watch("logoImage");
+  console.log("logoImage=>", logoImage);
+  const backgroundImage = watch("backgroundImage");
+  const cridentialImage = watch("cridentialImage");
   const router = useRouter();
 
   const onSubmit: SubmitHandler<Inputs> = (data) => {
     console.log("datais in first step=>", data);
-    setData({ property: data });
+    setData({
+      property: data,
+    });
 
     router.push("/section/step2");
   };
@@ -49,8 +56,8 @@ export default function Step() {
   //     }
   //   };
   //   console.log(watch("description")); // watch input value by passing the name of it
-  console.log("errors=>", errors?.chamberName?.message);
-  console.log("errors2=>", errors.logoImage);
+  // console.log("errors=>", errors?.chamberName?.message);
+  // console.log("errors2=>", errors.logoImage);
 
   return (
     <div className='flex w-full justify-center items-center flex-col'>
@@ -94,12 +101,13 @@ export default function Step() {
           type='number'
           {...register("cityId", {
             required: { value: true, message: "the field is requiered 0" },
+            setValueAs: (v) => parseInt(v),
           })}
         />
         <label htmlFor='cityId'>cityId</label>
       </div>
       {errors.cityId && <span>{errors.cityId.message}</span>}
-      <div className='flex'>
+      <div className='flex mt-4'>
         <input
           className='hidden'
           type='file'
@@ -113,10 +121,53 @@ export default function Step() {
           htmlFor='logoImage'
           className='cursor-pointer bg-blue-500 text-white p-2 rounded-md flex items-center justify-center'>
           <BsCloudUpload />
+          logo
         </label>
-        {logoImage && <span className='mt-2'>{"file"}</span>}
+        {logoImage && <span className='mt-2'>{logoImage[0]?.name}</span>}
       </div>
       {errors.logoImage && <span>{errors.logoImage.message}</span>}
+      <div className='flex mt-4'>
+        <input
+          className='hidden'
+          type='file'
+          accept='image/*'
+          id='backgroundImage'
+          {...register("backgroundImage", {
+            required: { value: true, message: "The field is required 1" },
+          })}
+        />
+        <label
+          htmlFor='backgroundImage'
+          className='cursor-pointer bg-blue-500 text-white p-2 rounded-md flex items-center justify-center'>
+          <BsCloudUpload />
+          background
+        </label>
+        {backgroundImage && (
+          <span className='mt-2'>{backgroundImage[0]?.name}</span>
+        )}
+      </div>
+      {errors.backgroundImage && <span>{errors.backgroundImage.message}</span>}
+      <div className='flex mt-4'>
+        <input
+          className='hidden'
+          type='file'
+          accept='image/*'
+          id='cridentialImage'
+          {...register("cridentialImage", {
+            required: { value: true, message: "The field is required 1" },
+          })}
+        />
+        <label
+          htmlFor='cridentialImage'
+          className='cursor-pointer bg-blue-500 text-white p-2 rounded-md flex items-center justify-center'>
+          <BsCloudUpload />
+          cridential
+        </label>
+        {cridentialImage && (
+          <span className='mt-2'>{cridentialImage[0]?.name}</span>
+        )}
+      </div>
+      {errors.cridentialImage && <span>{errors.cridentialImage.message}</span>}
       <button onClick={handleSubmit(onSubmit)}>submit</button>
     </div>
   );

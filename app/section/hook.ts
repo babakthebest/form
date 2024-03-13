@@ -4,6 +4,8 @@ type chambers = {
     description: string | null;
     chamberName: string | null;
     logoImage: FileList | null;
+    backgroundImage: FileList | null;
+    cridentialImage: FileList | null;
     deliveryInTown: boolean | null;
     freeDeliveryInTown: boolean | null;
     payAtHomeInTown: boolean | null;
@@ -27,12 +29,14 @@ const useChamberHook = create<chambers & action>((set) => ({
     description: null,
     chamberName: null,
     logoImage: null,
-    deliveryInTown: null,
-    freeDeliveryInTown: null,
-    payAtHomeInTown: null,
-    deliveryInOtherCity: null,
-    freeDeliveryInOtherCity: null,
-    payAtHomeInOtherCity: null,
+    backgroundImage: null,
+    cridentialImage: null,
+    deliveryInTown: false,
+    freeDeliveryInTown: false,
+    payAtHomeInTown: false,
+    deliveryInOtherCity: false,
+    freeDeliveryInOtherCity: false,
+    payAtHomeInOtherCity: false,
     address: null,
     cityId: null,
   },
