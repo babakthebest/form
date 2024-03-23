@@ -40,9 +40,11 @@ const useChamberHook = create<chambers & action>((set) => ({
     address: null,
     cityId: null,
   },
+  
   setData: (data) =>
     set((state) => ({
       property: { ...state.property, ...data.property },
+
     })),
 }));
 

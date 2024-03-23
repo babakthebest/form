@@ -1,74 +1,64 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
-import useChamberHook from "../hook";
-import axios from "axios";
+import { SubmitHandler, useForm } from "react-hook-form";
 
-type Inputs = {
-  description: string | null;
-  chamberName: string | null;
-  logoImage: FileList | null;
-  backgroundImage: FileList | null;
-  cridentialImage: FileList | null;
-  deliveryInTown: boolean | null;
-  freeDeliveryInTown: boolean | null;
-  payAtHomeInTown: boolean | null;
-  deliveryInOtherCity: boolean | null;
-  freeDeliveryInOtherCity: boolean | null;
-  payAtHomeInOtherCity: boolean | null;
-  address: string | null;
-  cityId: number | null;
-};
+import axios from "axios";
+import useChamberHook, { Chambers, ImageState } from "../hook2";
 
 export default function MyForm() {
-  const { setData, property } = useChamberHook();
+  const {
+    setChamberData,
+    property,
+    setLogoImage,
+    setBackgroundImage,
+    setCridentialImage,
+    logoImage,
+    backgroundImage,
+    cridentialImage,
+  } = useChamberHook();
   const [sendData, setSendadata] = useState(false);
   const {
     handleSubmit,
     register,
     formState: { errors },
-  } = useForm<Inputs>({
+  } = useForm<Chambers & ImageState>({
     defaultValues: {
-      deliveryInTown: property.deliveryInTown,
-      freeDeliveryInTown: property.freeDeliveryInTown,
-      payAtHomeInTown: property.payAtHomeInTown,
-      deliveryInOtherCity: property.deliveryInOtherCity,
-      freeDeliveryInOtherCity: property.freeDeliveryInOtherCity,
-      payAtHomeInOtherCity: property.freeDeliveryInOtherCity,
+      property: {
+        deliveryInTown: property.deliveryInTown,
+        freeDeliveryInTown: property.freeDeliveryInTown,
+        payAtHomeInTown: property.payAtHomeInTown,
+        deliveryInOtherCity: property.deliveryInOtherCity,
+        freeDeliveryInOtherCity: property.freeDeliveryInOtherCity,
+        payAtHomeInOtherCity: property.payAtHomeInOtherCity,
+      },
     },
   });
   const formData = new FormData();
 
-  const onSubmit = async (data: Inputs) => {
+  const onSubmit: SubmitHandler<Chambers & ImageState> = async (data) => {
     console.log(data);
-    setData({ property: data });
+    setChamberData({
+      property: data.property,
+    });
     setSendadata(true);
     // Handle the form data here
   };
   const url = "http://localhost:3001/api/chambers/new";
   const token =
-    "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IjA5MTg5MDEwOTEyIiwicm9sZXMiOltdLCJpYXQiOjE3MTAyMzg5NzEsImV4cCI6MTcxMjgzMDk3MX0.igwzMPFaV3XNt_uXXz5vhuVKC-igal6bW4xNeb0L9xM";
+    "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IjA5MTg5MDEwOTEyIiwicm9sZXMiOltdLCJpYXQiOjE3MTA5MzgwMjUsImV4cCI6MTcxMzUzMDAyNX0.AR_YCJG-xrcFpeQnajfqYDg4VqJDy6Cdd3-UtL3aBB4";
   const hanseleSendData = async () => {
     if (property) {
       const propertyString = JSON.stringify(property);
       formData.append("property", propertyString);
     }
-    if (property.backgroundImage && property.backgroundImage?.length > 0) {
-      formData.append(
-        "files",
-        property.backgroundImage[0],
-        "backgroundImage.jpg"
-      );
+    if (backgroundImage && backgroundImage?.length > 0) {
+      formData.append("images[]", backgroundImage[0], "backgroundImage.jpg");
     }
-    if (property.cridentialImage && property.cridentialImage?.length > 0) {
-      formData.append(
-        "files",
-        property.cridentialImage[0],
-        "cridentialImage.jpg"
-      );
+    if (cridentialImage && cridentialImage?.length > 0) {
+      formData.append("images[]", cridentialImage[0], "cridentialImage.jpg");
     }
-    if (property.logoImage && property.logoImage?.length > 0) {
-      formData.append("files", property.logoImage[0], "logoImage.jpg");
+    if (logoImage && logoImage?.length > 0) {
+      formData.append("images[]", logoImage[0], "logoImage.jpg");
     }
     try {
       await axios.post(url, formData, {
@@ -80,8 +70,9 @@ export default function MyForm() {
       console.log(error);
     }
   };
+  console.log("property in step2",property);
   useEffect(() => {
-    console.log("property=>", property);
+    console.log("logoImage=>", logoImage);
     if (sendData) {
       hanseleSendData();
     }
@@ -89,77 +80,78 @@ export default function MyForm() {
   }, [sendData]);
 
   return (
-    <div className='max-w-md mx-auto mt-8'>
-      <div className='mb-4'>
-        <label className='flex items-center'>
+    <div className="max-w-md mx-auto mt-8">
+      <div className="mb-4">
+        <label className="flex items-center">
           Delivery in Town
           <input
-            type='checkbox'
-            {...register("deliveryInTown")}
-            className='ml-2'
+            type="checkbox"
+            {...register("property.deliveryInTown")}
+            className="ml-2"
           />
         </label>
       </div>
 
-      <div className='mb-4'>
-        <label className='flex items-center'>
+      <div className="mb-4">
+        <label className="flex items-center">
           Free Delivery in Town
           <input
-            type='checkbox'
-            {...register("freeDeliveryInTown")}
-            className='ml-2'
+            type="checkbox"
+            {...register("property.freeDeliveryInTown")}
+            className="ml-2"
           />
         </label>
       </div>
 
-      <div className='mb-4'>
-        <label className='flex items-center'>
+      <div className="mb-4">
+        <label className="flex items-center">
           Pay at Home in Town
           <input
-            type='checkbox'
-            {...register("payAtHomeInTown")}
-            className='ml-2'
+            type="checkbox"
+            {...register("property.payAtHomeInTown")}
+            className="ml-2"
           />
         </label>
       </div>
 
-      <div className='mb-4'>
-        <label className='flex items-center'>
+      <div className="mb-4">
+        <label className="flex items-center">
           Delivery in Other City
           <input
-            type='checkbox'
-            {...register("deliveryInOtherCity")}
-            className='ml-2'
+            type="checkbox"
+            {...register("property.deliveryInOtherCity")}
+            className="ml-2"
           />
         </label>
       </div>
 
-      <div className='mb-4'>
-        <label className='flex items-center'>
+      <div className="mb-4">
+        <label className="flex items-center">
           Free Delivery in Other City
           <input
-            type='checkbox'
-            {...register("freeDeliveryInOtherCity")}
-            className='ml-2'
+            type="checkbox"
+            {...register("property.freeDeliveryInOtherCity")}
+            className="ml-2"
           />
         </label>
       </div>
 
-      <div className='mb-4'>
-        <label className='flex items-center'>
+      <div className="mb-4">
+        <label className="flex items-center">
           Pay at Home in Other City
           <input
-            type='checkbox'
-            {...register("payAtHomeInOtherCity")}
-            className='ml-2'
+            type="checkbox"
+            {...register("property.payAtHomeInOtherCity")}
+            className="ml-2"
           />
         </label>
       </div>
 
       <button
-        type='submit'
-        className='bg-blue-500 text-white py-2 px-4 rounded'
-        onClick={handleSubmit(onSubmit)}>
+        type="submit"
+        className="bg-blue-500 text-white py-2 px-4 rounded"
+        onClick={handleSubmit(onSubmit)}
+      >
         Submit
       </button>
     </div>

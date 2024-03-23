@@ -3,49 +3,54 @@ import { useRouter } from "next/navigation";
 import React from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { BsCloudUpload } from "react-icons/bs";
-import useChamberHook from "../hook";
+import ImageField from "./imageField";
+import useChamberHook, { Chambers, ImageState } from "../hook2";
+import SelectCity from "./SelectCity";
 
-type Inputs = {
-  description: string | null;
-  chamberName: string | null;
-  logoImage: FileList | null;
-  backgroundImage: FileList | null;
-  cridentialImage: FileList | null;
-  deliveryInTown: boolean | null;
-  freeDeliveryInTown: boolean | null;
-  payAtHomeInTown: boolean | null;
-  deliveryInOtherCity: boolean | null;
-  freeDeliveryInOtherCity: boolean | null;
-  payAtHomeInOtherCity: boolean | null;
-  address: string | null;
-  cityId: number | null;
-};
 export default function Step() {
-  const { setData, property } = useChamberHook();
+  const {
+    setChamberData,
+    property,
+    setLogoImage,
+    setBackgroundImage,
+    setCridentialImage,
+    logoImage,
+    backgroundImage,
+    cridentialImage,
+  } = useChamberHook();
   const {
     handleSubmit,
     register,
     formState: { errors },
     watch,
     setValue,
-  } = useForm<Inputs>({
+  } = useForm<Chambers & ImageState>({
     defaultValues: {
-      description: property.description,
-      chamberName: property.chamberName,
-      logoImage: property.logoImage,
+      property: {
+        description: property.description,
+        chamberName: property.chamberName,
+        cityId: property.cityId,
+        address: property.address,
+      },
+      logoImage: logoImage,
+      cridentialImage: cridentialImage,
+      backgroundImage: backgroundImage,
     },
   });
-  const logoImage = watch("logoImage");
-  console.log("logoImage=>", logoImage);
-  const backgroundImage = watch("backgroundImage");
-  const cridentialImage = watch("cridentialImage");
+  const watchlogoImage = watch("logoImage");
+  // console.log("logoImage=>", logoImage);
+  const watchbackgroundImage = watch("backgroundImage");
+  const watchcridentialImage = watch("cridentialImage");
   const router = useRouter();
-
-  const onSubmit: SubmitHandler<Inputs> = (data) => {
+  // console.log("errors", errors);
+  const onSubmit: SubmitHandler<Chambers & ImageState> = (data) => {
     console.log("datais in first step=>", data);
-    setData({
-      property: data,
+    setChamberData({
+      property: data.property,
     });
+    setLogoImage(data.logoImage);
+    setBackgroundImage(backgroundImage);
+    setCridentialImage(cridentialImage);
 
     router.push("/section/step2");
   };
@@ -58,117 +63,147 @@ export default function Step() {
   //   console.log(watch("description")); // watch input value by passing the name of it
   // console.log("errors=>", errors?.chamberName?.message);
   // console.log("errors2=>", errors.logoImage);
-
+  console.log("property in step1", property);
+  console.log("errors in step1", errors);
   return (
-    <div className='flex w-full justify-center items-center flex-col'>
-      <div className='flex'>
-        <input
-          id='description'
-          {...register("description")}
-          className='border-2 focus:outline-none rounded-lg border-emerald-500 mt-2 '
-          type='text'
-        />
-        <label htmlFor='description'>description</label>
-      </div>
-      <div className='flex'>
-        <input
-          id='chamberName'
-          className='border-2 focus:outline-none rounded-lg border-emerald-500  mt-2'
-          type='text'
-          {...register("chamberName", {
-            required: { value: true, message: "the field is requiered 0" },
-          })}
-        />
-        <label htmlFor='chamberName'>chamberName</label>
-      </div>
-      {errors.chamberName && <span>{errors.chamberName.message}</span>}
-      <div className='flex'>
-        <input
-          id='address'
-          className='border-2 focus:outline-none rounded-lg border-emerald-500  mt-2'
-          type='text'
-          {...register("address", {
-            required: { value: true, message: "the field is requiered 0" },
-          })}
-        />
-        <label htmlFor='address'>address</label>
-      </div>
-      {errors.address && <span>{errors.address.message}</span>}
-      <div className='flex'>
-        <input
-          id='cityId'
-          className='border-2 focus:outline-none rounded-lg border-emerald-500  mt-2'
-          type='number'
-          {...register("cityId", {
-            required: { value: true, message: "the field is requiered 0" },
-            setValueAs: (v) => parseInt(v),
-          })}
-        />
-        <label htmlFor='cityId'>cityId</label>
-      </div>
-      {errors.cityId && <span>{errors.cityId.message}</span>}
-      <div className='flex mt-4'>
-        <input
-          className='hidden'
-          type='file'
-          accept='image/*'
-          id='logoImage'
-          {...register("logoImage", {
-            required: { value: true, message: "The field is required 1" },
-          })}
-        />
-        <label
-          htmlFor='logoImage'
-          className='cursor-pointer bg-blue-500 text-white p-2 rounded-md flex items-center justify-center'>
-          <BsCloudUpload />
-          logo
-        </label>
-        {logoImage && <span className='mt-2'>{logoImage[0]?.name}</span>}
-      </div>
-      {errors.logoImage && <span>{errors.logoImage.message}</span>}
-      <div className='flex mt-4'>
-        <input
-          className='hidden'
-          type='file'
-          accept='image/*'
-          id='backgroundImage'
-          {...register("backgroundImage", {
-            required: { value: true, message: "The field is required 1" },
-          })}
-        />
-        <label
-          htmlFor='backgroundImage'
-          className='cursor-pointer bg-blue-500 text-white p-2 rounded-md flex items-center justify-center'>
-          <BsCloudUpload />
-          background
-        </label>
-        {backgroundImage && (
-          <span className='mt-2'>{backgroundImage[0]?.name}</span>
+    <div className="w-full h-full">
+      <div className=" justify-center items-center flex-col">
+        <div className="flex">
+          <input
+            id="description"
+            {...register("property.description")}
+            className="border-2 focus:outline-none rounded-lg border-emerald-500 mt-2 "
+            type="text"
+          />
+          <label htmlFor="description">description</label>
+        </div>
+        <div className="flex">
+          <input
+            id="chamberName"
+            className="border-2 focus:outline-none rounded-lg border-emerald-500  mt-2"
+            type="text"
+            {...register("property.chamberName", {
+              required: { value: true, message: "the field is requiered 0" },
+            })}
+          />
+          <label htmlFor="chamberName">chamberName</label>
+        </div>
+        {errors.property?.chamberName && (
+          <span>{errors.property?.chamberName.message}</span>
         )}
-      </div>
-      {errors.backgroundImage && <span>{errors.backgroundImage.message}</span>}
-      <div className='flex mt-4'>
-        <input
-          className='hidden'
-          type='file'
-          accept='image/*'
-          id='cridentialImage'
-          {...register("cridentialImage", {
-            required: { value: true, message: "The field is required 1" },
-          })}
-        />
-        <label
-          htmlFor='cridentialImage'
-          className='cursor-pointer bg-blue-500 text-white p-2 rounded-md flex items-center justify-center'>
-          <BsCloudUpload />
-          cridential
-        </label>
-        {cridentialImage && (
-          <span className='mt-2'>{cridentialImage[0]?.name}</span>
+        <div className="flex">
+          <input
+            id="address"
+            className="border-2 focus:outline-none rounded-lg border-emerald-500  mt-2"
+            type="text"
+            {...register("property.address", {
+              required: { value: true, message: "the field is requiered 0" },
+            })}
+          />
+          <label htmlFor="address">address</label>
+        </div>
+        {errors.property?.address && (
+          <span>{errors.property?.address.message}</span>
         )}
+        {/* <div className="flex">
+          <input
+            id="cityId"
+            className="border-2 focus:outline-none rounded-lg border-emerald-500  mt-2"
+            type="number"
+            {...register("property.cityId", {
+              required: { value: true, message: "the field is requiered 0" },
+              setValueAs: (v) => parseInt(v),
+            })}
+          />
+          <label htmlFor="cityId">cityId</label>
+        </div>
+        {errors.property?.cityId && (
+          <span>{errors.property?.cityId.message}</span>
+        )} */}
+        {/* <div className="flex mt-4">
+          <input
+            className="hidden"
+            type="file"
+            accept="image/*"
+            id="logoImage"
+            {...register("logoImage", {
+              required: { value: true, message: "The field is required 1" },
+              setValueAs: (e: React.ChangeEvent<HTMLInputElement>) => {
+                if (e?.target?.files) {
+                  setValue("logoImage", e?.target?.files);
+                }
+              },
+            })}
+          />
+          <label
+            htmlFor="logoImage"
+            className="cursor-pointer bg-blue-500 text-white p-2 rounded-md flex items-center justify-center"
+          >
+            <BsCloudUpload />
+            logo
+          </label>
+          {watchlogoImage && <span className="mt-2">{watchlogoImage[0]?.name}</span>}
+        </div>
+        {errors.logoImage && <span>{errors.logoImage.message}</span>} */}
+        {/* <div className="flex mt-4">
+          <input
+            className="hidden"
+            type="file"
+            accept="image/*"
+            id="backgroundImage"
+            {...register("backgroundImage", {
+              required: { value: true, message: "The field is required 1" },
+            })}
+          />
+          <label
+            htmlFor="backgroundImage"
+            className="cursor-pointer bg-blue-500 text-white p-2 rounded-md flex items-center justify-center"
+          >
+            <BsCloudUpload />
+            background
+          </label>
+          {watchbackgroundImage && (
+            <span className="mt-2">{watchbackgroundImage[0]?.name}</span>
+          )}
+        </div>
+        {errors.backgroundImage && (
+          <span>{errors.backgroundImage.message}</span>
+        )}
+        <div className="flex mt-4">
+          <input
+            className="hidden"
+            type="file"
+            accept="image/*"
+            id="cridentialImage"
+            {...register("cridentialImage", {
+              required: { value: true, message: "The field is required 1" },
+            })}
+          />
+          <label
+            htmlFor="cridentialImage"
+            className="cursor-pointer bg-blue-500 text-white p-2 rounded-md flex items-center justify-center"
+          >
+            <BsCloudUpload />
+            cridential
+          </label>
+          {watchcridentialImage && (
+            <span className="mt-2">{watchcridentialImage[0]?.name}</span>
+          )}
+        </div>
+        {errors.cridentialImage && (
+          <span>{errors.cridentialImage.message}</span>
+        )}
+        <ImageField
+          files={logoImage}
+          setFiles={setLogoImage}
+          set={setValue}
+          register={register}
+          id="logoImage"
+          required={true}
+        ></ImageField> */}
+        <SelectCity register={register} set={setValue} id="property.cityId" />
+        <button onClick={handleSubmit(onSubmit)}>submit</button>
       </div>
-      {errors.cridentialImage && <span>{errors.cridentialImage.message}</span>}
-      <button onClick={handleSubmit(onSubmit)}>submit</button>
     </div>
   );
 }
