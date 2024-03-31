@@ -1,9 +1,9 @@
 import { create } from "zustand";
 
 export type ImageState = {
-  logoImage: FileList | null;
-  backgroundImage: FileList | null;
-  cridentialImage: FileList | null;
+  logoImage: (Blob | File)[] | null;
+  backgroundImage: (Blob | File)[] | null;
+  cridentialImage: (Blob | File)[] | null;
 };
 
 type CityType = {
@@ -28,9 +28,9 @@ export type Chambers = {
 
 type Action = {
   setChamberData: (data: Partial<Chambers>) => void;
-  setLogoImage: (image: FileList | null) => void;
-  setBackgroundImage: (image: FileList | null) => void;
-  setCridentialImage: (image: FileList | null) => void;
+  setLogoImage: (image: (Blob | File)[] | null) => void;
+  setBackgroundImage: (image: (Blob | File)[] | null) => void;
+  setCridentialImage: (image: (Blob | File)[] | null) => void;
 };
 
 const useChamberHook = create<Chambers & ImageState & Action>((set) => {

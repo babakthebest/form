@@ -35,7 +35,7 @@ const SelectCity = (props: Props) => {
     // placeholder,
   } = props;
 
-  const data = [
+  const cityArray = [
     { id: 1, title: "hamedan" },
     { id: 2, title: "khorasan" },
     { id: 3, title: "hamedan1" },
@@ -46,37 +46,31 @@ const SelectCity = (props: Props) => {
     { id: 8, title: "hamedan6" },
   ];
 
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
   const [selected, setSelected] = useState<CityType>();
-  const [cities, setCities] = useState<CityType[]>(data);
-  const [s, sets] = useState<string | undefined>("data");
-
-  //   useLayoutEffect(() => {
-  //     const mainCities = allCities.filter((c) => c.parent != null);
-  //     setFilteredDataList(mainCities);
-  //   }, []);
+  const [cities, setCities] = useState<CityType[]>(cityArray);
 
   const onSelect = (item: CityType) => {
     // console.log(item.zones)
     setSelected(item);
-    // setIsOpen(false);
+    setIsOpen(false);
   };
 
   useEffect(() => {
     set(id, selected);
   }, [selected]);
 
-  console.log(selected);
+  // console.log(selected);
 
   const onSearch = (e: any) => {
     const query = e.target.value.trim(); // Trim whitespace from the input
 
     // Check if the query is empty
     if (query === "") {
-      setCities(data); // Reset the cities list to the original data
+      setCities(cityArray); // Reset the cities list to the original data
     } else {
       // Filter cities based on the query
-      const updatedList = data.filter((item) =>
+      const updatedList = cityArray.filter((item) =>
         item.title.toLowerCase().includes(query.toLowerCase())
       );
       setCities(updatedList);
@@ -92,13 +86,13 @@ const SelectCity = (props: Props) => {
         `}
       >
         <input
-          {...register(id, { required: true })}
+          {...register(`${id}.title`, {
+            required: { value: true, message: "the field is requiered " },
+          })}
           readOnly
           id={id}
           type="text"
-          // value={selected ? selected?.title : ""}
-          value={s}
-          //   onChange={() => sets(selected?.title)}
+          value={selected?.title || ""} //   onChange={() => sets(selected?.title)}
           //   placeholder="jjjj"
           className="cursor-pointer bg-white w-full outline-none text-sm text-neutral-500"
         />

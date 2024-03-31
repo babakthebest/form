@@ -49,8 +49,8 @@ export default function Step() {
       property: data.property,
     });
     setLogoImage(data.logoImage);
-    setBackgroundImage(backgroundImage);
-    setCridentialImage(cridentialImage);
+    setBackgroundImage(data.backgroundImage);
+    setCridentialImage(data.cridentialImage);
 
     router.push("/section/step2");
   };
@@ -145,62 +145,39 @@ export default function Step() {
           {watchlogoImage && <span className="mt-2">{watchlogoImage[0]?.name}</span>}
         </div>
         {errors.logoImage && <span>{errors.logoImage.message}</span>} */}
-        {/* <div className="flex mt-4">
-          <input
-            className="hidden"
-            type="file"
-            accept="image/*"
-            id="backgroundImage"
-            {...register("backgroundImage", {
-              required: { value: true, message: "The field is required 1" },
-            })}
-          />
-          <label
-            htmlFor="backgroundImage"
-            className="cursor-pointer bg-blue-500 text-white p-2 rounded-md flex items-center justify-center"
-          >
-            <BsCloudUpload />
-            background
-          </label>
-          {watchbackgroundImage && (
-            <span className="mt-2">{watchbackgroundImage[0]?.name}</span>
-          )}
-        </div>
-        {errors.backgroundImage && (
-          <span>{errors.backgroundImage.message}</span>
-        )}
-        <div className="flex mt-4">
-          <input
-            className="hidden"
-            type="file"
-            accept="image/*"
-            id="cridentialImage"
-            {...register("cridentialImage", {
-              required: { value: true, message: "The field is required 1" },
-            })}
-          />
-          <label
-            htmlFor="cridentialImage"
-            className="cursor-pointer bg-blue-500 text-white p-2 rounded-md flex items-center justify-center"
-          >
-            <BsCloudUpload />
-            cridential
-          </label>
-          {watchcridentialImage && (
-            <span className="mt-2">{watchcridentialImage[0]?.name}</span>
-          )}
-        </div>
-        {errors.cridentialImage && (
-          <span>{errors.cridentialImage.message}</span>
-        )}
+        <ImageField
+          files={backgroundImage}
+          setFiles={setBackgroundImage}
+          set={setValue}
+          register={register}
+          formError={errors}
+          id="backgroundImage"
+          required={true}
+          maxFiles={1}
+          maxSize={1024 * 1024 * 5}
+        ></ImageField>
+        <ImageField
+          files={cridentialImage}
+          setFiles={setCridentialImage}
+          set={setValue}
+          register={register}
+          formError={errors}
+          id="cridentialImage"
+          required={true}
+          maxFiles={1}
+          maxSize={1024 * 1024 * 3}
+        ></ImageField>
         <ImageField
           files={logoImage}
           setFiles={setLogoImage}
           set={setValue}
           register={register}
+          formError={errors}
           id="logoImage"
           required={true}
-        ></ImageField> */}
+          maxFiles={2}
+          maxSize={1024 * 1024 * 3}
+        ></ImageField>
         <SelectCity register={register} set={setValue} id="property.cityId" />
         <button onClick={handleSubmit(onSubmit)}>submit</button>
       </div>

@@ -48,13 +48,28 @@ export default function MyForm() {
     "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IjA5MTg5MDEwOTEyIiwicm9sZXMiOltdLCJpYXQiOjE3MTA5MzgwMjUsImV4cCI6MTcxMzUzMDAyNX0.AR_YCJG-xrcFpeQnajfqYDg4VqJDy6Cdd3-UtL3aBB4";
   const hanseleSendData = async () => {
     if (property) {
-      const propertyString = JSON.stringify(property);
+      const editedProperty = {
+        description: property.description,
+        chamberName: property.chamberName,
+        deliveryInTown: property.deliveryInTown,
+        freeDeliveryInTown: property.freeDeliveryInTown,
+        payAtHomeInTown: property.payAtHomeInTown,
+        deliveryInOtherCity: property.deliveryInOtherCity,
+        freeDeliveryInOtherCity: property.freeDeliveryInOtherCity,
+        payAtHomeInOtherCity: property.payAtHomeInOtherCity,
+        address: property.address,
+        cityId: property.cityId?.id,
+      };
+      const propertyString = JSON.stringify(editedProperty);
       formData.append("property", propertyString);
     }
     if (backgroundImage && backgroundImage?.length > 0) {
+      console.log("backgroundImage", backgroundImage);
       formData.append("images[]", backgroundImage[0], "backgroundImage.jpg");
     }
     if (cridentialImage && cridentialImage?.length > 0) {
+      console.log("cridentialImage", cridentialImage);
+
       formData.append("images[]", cridentialImage[0], "cridentialImage.jpg");
     }
     if (logoImage && logoImage?.length > 0) {
@@ -70,7 +85,7 @@ export default function MyForm() {
       console.log(error);
     }
   };
-  console.log("property in step2",property);
+  console.log("property in step2", property);
   useEffect(() => {
     console.log("logoImage=>", logoImage);
     if (sendData) {
